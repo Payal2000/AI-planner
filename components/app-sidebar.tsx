@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import {
   HomeIcon,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+const NavUser = dynamic(() => import("@/components/nav-user").then(m => ({ default: m.NavUser })), { ssr: false })
 import {
   Sidebar,
   SidebarContent,
