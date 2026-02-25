@@ -10,6 +10,7 @@ import { useSelectedDate } from '@/context/DateContext'
 type BlockType = 'workout' | 'outreach' | 'leetcode' | 'study' | 'build' | 'apply' | 'break' | 'meal'
 
 interface Block {
+  id: string
   time: string
   activity: string
   reason: string
@@ -17,20 +18,20 @@ interface Block {
 }
 
 const defaultSchedule: Block[] = [
-  { time: '6:30 – 6:45', activity: 'Wake Up + Water', type: 'break', reason: 'Hydrate to kickstart metabolism' },
-  { time: '6:45 – 7:00', activity: 'Morning Workout (15 min, fasted)', type: 'workout', reason: 'Peak fat burning — 90% more fat burned before breakfast' },
-  { time: '7:00 – 7:30', activity: 'Breakfast + Get Ready', type: 'meal', reason: 'Fuel your brain for the day ahead' },
-  { time: '7:30 – 8:30', activity: 'Cold Outreach', type: 'outreach', reason: 'Inboxes checked 8–10 AM — highest reply rates' },
-  { time: '8:30 – 8:45', activity: 'Break', type: 'break', reason: 'Reset before deep work' },
-  { time: '8:45 – 10:45', activity: 'LeetCode — 5 New Problems', type: 'leetcode', reason: '9–11 AM = peak analytical focus (Huberman)' },
-  { time: '10:45 – 12:00', activity: 'LeetCode — Review Past 5 Days', type: 'leetcode', reason: 'Short-term memory peaks in morning hours' },
-  { time: '12:00 – 1:00', activity: 'Lunch Break', type: 'meal', reason: 'Full break — no screens' },
-  { time: '1:00 – 4:00', activity: 'Study (3 hrs)', type: 'study', reason: 'Afternoon = best for review, system design & critical thinking' },
-  { time: '4:00 – 4:15', activity: 'Break', type: 'break', reason: 'Rest before creative work' },
-  { time: '4:15 – 5:15', activity: 'Build (1 hr)', type: 'build', reason: 'Late afternoon suits creative & project work' },
-  { time: '5:15 – 5:45', activity: 'Evening Workout (30 min)', type: 'workout', reason: 'Strength & endurance peak in evening; stress relief' },
-  { time: '5:45 – 6:15', activity: 'Freshen Up + Snack', type: 'break', reason: 'Recover and refuel' },
-  { time: '6:15 – 7:15', activity: 'Job Applications', type: 'apply', reason: 'Prep in evening, schedule submissions for next morning 6–10 AM' },
+  { id: 'd1', time: '6:30 – 6:45', activity: 'Wake Up + Water', type: 'break', reason: 'Hydrate to kickstart metabolism' },
+  { id: 'd2', time: '6:45 – 7:00', activity: 'Morning Workout (15 min, fasted)', type: 'workout', reason: 'Peak fat burning — 90% more fat burned before breakfast' },
+  { id: 'd3', time: '7:00 – 7:30', activity: 'Breakfast + Get Ready', type: 'meal', reason: 'Fuel your brain for the day ahead' },
+  { id: 'd4', time: '7:30 – 8:30', activity: 'Cold Outreach', type: 'outreach', reason: 'Inboxes checked 8–10 AM — highest reply rates' },
+  { id: 'd5', time: '8:30 – 8:45', activity: 'Break', type: 'break', reason: 'Reset before deep work' },
+  { id: 'd6', time: '8:45 – 10:45', activity: 'LeetCode — 5 New Problems', type: 'leetcode', reason: '9–11 AM = peak analytical focus (Huberman)' },
+  { id: 'd7', time: '10:45 – 12:00', activity: 'LeetCode — Review Past 5 Days', type: 'leetcode', reason: 'Short-term memory peaks in morning hours' },
+  { id: 'd8', time: '12:00 – 1:00', activity: 'Lunch Break', type: 'meal', reason: 'Full break — no screens' },
+  { id: 'd9', time: '1:00 – 4:00', activity: 'Study (3 hrs)', type: 'study', reason: 'Afternoon = best for review, system design & critical thinking' },
+  { id: 'd10', time: '4:00 – 4:15', activity: 'Break', type: 'break', reason: 'Rest before creative work' },
+  { id: 'd11', time: '4:15 – 5:15', activity: 'Build (1 hr)', type: 'build', reason: 'Late afternoon suits creative & project work' },
+  { id: 'd12', time: '5:15 – 5:45', activity: 'Evening Workout (30 min)', type: 'workout', reason: 'Strength & endurance peak in evening; stress relief' },
+  { id: 'd13', time: '5:45 – 6:15', activity: 'Freshen Up + Snack', type: 'break', reason: 'Recover and refuel' },
+  { id: 'd14', time: '6:15 – 7:15', activity: 'Job Applications', type: 'apply', reason: 'Prep in evening, schedule submissions for next morning 6–10 AM' },
 ]
 
 const dotColors: Record<string, string> = {
@@ -366,7 +367,10 @@ export default function TimetableSection() {
 
       if (!cancelled) {
         const entries = row?.data?.timetable
-        setBlocks(Array.isArray(entries) && entries.length ? entries as Block[] : [])
+        const parsed: Block[] = Array.isArray(entries) && entries.length
+          ? (entries as Block[]).map((b, i) => ({ ...b, id: b.id ?? `loaded-${i}` }))
+          : []
+        setBlocks(parsed)
         setLoading(false)
       }
     }
@@ -385,7 +389,7 @@ export default function TimetableSection() {
   }
 
   const addBlock = () => {
-    setBlocks((prev) => [...prev, { time: '', activity: '', reason: '', type: 'study' }])
+    setBlocks((prev) => [...prev, { id: `b-${Date.now()}`, time: '', activity: '', reason: '', type: 'study' }])
     markDirty()
   }
 
@@ -530,7 +534,7 @@ export default function TimetableSection() {
                   <tbody>
                     {(expanded ? blocks : blocks.slice(0, 7)).map((row, i) => (
                       <tr
-                        key={`${row.time}-${i}`}
+                        key={row.id}
                         className="border-t"
                         style={{ borderColor: 'rgba(200,160,170,0.12)' }}
                       >
