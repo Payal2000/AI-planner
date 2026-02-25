@@ -388,7 +388,7 @@ export default function DailyPlanner() {
           {/* ── Header ── */}
           <div
             className="px-4 sm:px-9 py-5 sm:py-7 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap"
-            style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+            style={{ background: '#fdf0f4' }}
           >
             <div>
               <h3 className="font-playfair text-2xl text-ink-dark mb-1">Today&apos;s Plan</h3>
@@ -470,7 +470,7 @@ export default function DailyPlanner() {
               >
                 <div
                   className="mx-4 sm:mx-9 my-5 rounded-[16px] p-5 border border-petal-light"
-                  style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+                  style={{ background: '#fdf0f4' }}
                 >
                   <p className="text-[10px] font-semibold tracking-[3px] uppercase text-petal mb-3">✨ Your Daily Brief</p>
                   <p className="font-cormorant text-[16px] text-ink-mid leading-relaxed whitespace-pre-wrap">{brief}</p>
@@ -512,7 +512,7 @@ export default function DailyPlanner() {
               >
                 <div
                   className="mx-4 sm:mx-9 my-5 rounded-[16px] p-5 border border-petal-light"
-                  style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+                  style={{ background: '#fdf0f4' }}
                 >
                   {planStatus === 'done' ? (
                     <>

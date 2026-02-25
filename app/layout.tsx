@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${cormorant.variable} ${dmSans.variable} font-dm bg-cream text-ink-dark overflow-x-hidden`}
+        className={`${playfair.variable} ${cormorant.variable} ${dmSans.variable} font-dm bg-warm-white text-ink-dark overflow-hidden`}
       >
         {children}
       </body>

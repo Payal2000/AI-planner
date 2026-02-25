@@ -48,9 +48,8 @@ export default function MealsSection() {
           <div className="md:col-span-2">
             <div
               className="bg-white rounded-[20px] shadow-soft overflow-hidden"
-              style={{ borderTop: '4px solid', borderImage: 'linear-gradient(90deg, #f5c4a1, #fce8d5) 1' }}
             >
-              <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #f5c4a1, #fce8d5)' }} />
+              <div className="h-1 w-full" style={{ background: '#f5c4a1' }} />
               <div className="p-4 sm:p-7 md:p-9">
                 <h3 className="font-playfair text-xl text-ink-dark mb-1.5">🍽️ Meal Planner</h3>
                 <p className="text-[13px] text-ink-soft mb-5">Weekly meal prep saves time and keeps you on track.</p>

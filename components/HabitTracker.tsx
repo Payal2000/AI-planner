@@ -194,8 +194,7 @@ export default function HabitTracker() {
 
           {/* ── Header ── */}
           <div
-            className="px-4 sm:px-9 py-5 sm:py-7 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap"
-            style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+            className="px-4 sm:px-9 py-5 sm:py-7 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-wrap bg-white border-b border-petal-light"
           >
             <div>
               <h3 className="font-playfair text-2xl text-ink-dark mb-1">This Week&apos;s Habits</h3>
@@ -316,7 +315,7 @@ export default function HabitTracker() {
                 >
                   <div
                     className="mt-6 rounded-[16px] p-5 border border-petal-light"
-                    style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+                    style={{ background: '#fdf0f4' }}
                   >
                     {analysisStatus === 'done' ? (
                       <>
@@ -348,7 +347,7 @@ export default function HabitTracker() {
                 >
                   <div
                     className="mt-4 rounded-[16px] p-5 border border-petal-light"
-                    style={{ background: 'linear-gradient(135deg, #fdf0f4, #ede5f7)' }}
+                    style={{ background: '#fdf0f4' }}
                   >
                     {wrapStatus === 'done' ? (
                       <>
