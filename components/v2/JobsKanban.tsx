@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 
 type Status = 'Saved' | 'Applied' | 'Interview' | 'Offer' | 'Rejected'
 
 interface Application {
-  id: string
+  id: string          // uuid from Supabase (or temp id for optimistic)
   company: string
   position: string
   status: Status
@@ -27,92 +27,103 @@ const COLUMNS: { id: Status; label: string; color: string; dot: string }[] = [
 
 const today = () => new Date().toISOString().split('T')[0]
 
-function newApp(): Application {
-  return {
-    id: Date.now().toString(),
-    company: '',
-    position: '',
-    status: 'Saved',
-    date: today(),
-    salary: '',
-    website: '',
-    contact: '',
-  }
-}
-
-const STORAGE_KEY = 'kanban-apps-v1'
-
 export default function JobsKanban() {
   const supabase = createClient()
   const [apps, setApps] = useState<Application[]>([])
   const [userId, setUserId] = useState<string | null>(null)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
+  // ── Load ──────────────────────────────────────────────────────────────
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setUserId(user.id)
-        const { data: row } = await supabase
-          .from('daily_plans').select('data')
-          .eq('user_id', user.id).eq('date', 'job-tracker').maybeSingle()
-        if (row?.data?.applications) {
-          // Migrate old status values if needed
-          const rawApps = row.data.applications as (Omit<Application, 'status'> & { status: string })[]
-          const migrated: Application[] = rawApps.map(a => ({
-            ...a,
-            status: (a.status === 'Interviewing' ? 'Interview' : a.status) as Status,
-          }))
-          setApps(migrated)
-          return
-        }
+      if (!user) return
+      setUserId(user.id)
+
+      const { data, error } = await supabase
+        .from('job_applications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+
+      if (!error && data) {
+        setApps(data as Application[])
       }
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY)
-        if (raw) setApps(JSON.parse(raw))
-      } catch { /* ignore */ }
     }
     load()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const persist = useCallback((next: Application[]) => {
-    setApps(next)
-    if (userId) {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-      debounceRef.current = setTimeout(async () => {
-        setSaveStatus('saving')
-        const { error } = await supabase.from('daily_plans').upsert(
-          { user_id: userId, date: 'job-tracker', data: { applications: next }, updated_at: new Date().toISOString() },
-          { onConflict: 'user_id,date' }
-        )
-        setSaveStatus(error ? 'error' : 'saved')
-        setTimeout(() => setSaveStatus('idle'), 2000)
-      }, 800)
-    } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+  // ── Add ───────────────────────────────────────────────────────────────
+  const addApp = async (status: Status) => {
+    if (!userId) return
+    setSaveStatus('saving')
+
+    const newRow = {
+      user_id: userId,
+      company: '',
+      position: '',
+      status,
+      date: today(),
+      salary: '',
+      website: '',
+      contact: '',
     }
-  }, [userId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const addApp = (status: Status) => {
-    const app = { ...newApp(), status }
-    const next = [...apps, app]
-    persist(next)
-    setExpandedId(app.id)
+    const { data, error } = await supabase
+      .from('job_applications')
+      .insert(newRow)
+      .select()
+      .single()
+
+    if (!error && data) {
+      setApps(prev => [...prev, data as Application])
+      setExpandedId(data.id)
+      setSaveStatus('saved')
+    } else {
+      setSaveStatus('error')
+    }
+    setTimeout(() => setSaveStatus('idle'), 2000)
   }
 
-  const updateApp = (id: string, field: keyof Application, value: string) => {
-    persist(apps.map(a => a.id === id ? { ...a, [field]: value } : a))
+  // ── Update field ──────────────────────────────────────────────────────
+  const updateApp = async (id: string, field: keyof Application, value: string) => {
+    // Optimistic update
+    setApps(prev => prev.map(a => a.id === id ? { ...a, [field]: value } : a))
+
+    if (!userId) return
+    const { error } = await supabase
+      .from('job_applications')
+      .update({ [field]: value, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
+
+    if (error) setSaveStatus('error')
   }
 
-  const moveApp = (id: string, status: Status) => {
-    persist(apps.map(a => a.id === id ? { ...a, status } : a))
+  // ── Move status ───────────────────────────────────────────────────────
+  const moveApp = async (id: string, status: Status) => {
+    setApps(prev => prev.map(a => a.id === id ? { ...a, status } : a))
+
+    if (!userId) return
+    await supabase
+      .from('job_applications')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', userId)
   }
 
-  const deleteApp = (id: string) => {
-    persist(apps.filter(a => a.id !== id))
+  // ── Delete ────────────────────────────────────────────────────────────
+  const deleteApp = async (id: string) => {
+    setApps(prev => prev.filter(a => a.id !== id))
     if (expandedId === id) setExpandedId(null)
+
+    if (!userId) return
+    await supabase
+      .from('job_applications')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId)
   }
 
   return (
@@ -126,6 +137,7 @@ export default function JobsKanban() {
           {saveStatus === 'saving' && <span className="text-[11px] text-ink-faint font-dm">Saving…</span>}
           {saveStatus === 'saved' && <span className="text-[11px] text-petal-deep font-semibold font-dm">✓ Saved</span>}
           {saveStatus === 'error' && <span className="text-[11px] text-red-400 font-dm">⚠ Save failed</span>}
+          {!userId && <span className="text-[11px] text-ink-faint font-dm">Sign in to save</span>}
           <span className="text-[12px] text-ink-soft font-dm">{apps.length} total</span>
         </div>
       </div>
@@ -196,6 +208,12 @@ export default function JobsKanban() {
                           placeholder="Job URL"
                           className="w-full rounded-lg border border-petal-light bg-warm-white px-2.5 py-1.5 text-[12px] font-dm focus:border-petal outline-none"
                         />
+                        <input
+                          value={app.contact}
+                          onChange={e => updateApp(app.id, 'contact', e.target.value)}
+                          placeholder="Contact name"
+                          className="w-full rounded-lg border border-petal-light bg-warm-white px-2.5 py-1.5 text-[12px] font-dm focus:border-petal outline-none"
+                        />
 
                         {/* Move to */}
                         <div>
@@ -229,7 +247,8 @@ export default function JobsKanban() {
               {/* Add button */}
               <button
                 onClick={() => addApp(col.id)}
-                className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-[14px] border border-dashed border-petal-light text-ink-faint text-[12px] font-dm hover:border-petal hover:text-petal-deep transition-colors"
+                disabled={!userId}
+                className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-[14px] border border-dashed border-petal-light text-ink-faint text-[12px] font-dm hover:border-petal hover:text-petal-deep transition-colors disabled:opacity-40"
               >
                 <span>+</span>
                 <span>Add</span>
