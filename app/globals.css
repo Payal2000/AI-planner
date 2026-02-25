@@ -30,37 +30,15 @@ html { scroll-behavior: smooth; }
 
 @layer base {
   :root {
-    /* Petal palette mapped to shadcn tokens */
-    --background: 255 251 249;
-    --foreground: 61 43 43;
-    --card: 254 250 248;
-    --card-foreground: 61 43 43;
-    --popover: 254 250 248;
-    --popover-foreground: 61 43 43;
-    --primary: 199 125 148;
-    --primary-foreground: 255 251 249;
-    --secondary: 253 240 244;
-    --secondary-foreground: 199 125 148;
-    --muted: 240 232 234;
-    --muted-foreground: 156 126 126;
-    --accent: 253 240 244;
-    --accent-foreground: 199 125 148;
-    --destructive: 239 68 68;
-    --destructive-foreground: 255 255 255;
-    --border: 245 213 222;
-    --input: 245 213 222;
-    --ring: 232 160 180;
-    --radius: 0.75rem;
-
-    /* Sidebar tokens — petal palette */
-    --sidebar-background: 254 250 248;
-    --sidebar-foreground: 61 43 43;
-    --sidebar-primary: 199 125 148;
-    --sidebar-primary-foreground: 255 251 249;
-    --sidebar-accent: 253 240 244;
-    --sidebar-accent-foreground: 199 125 148;
-    --sidebar-border: 245 213 222;
-    --sidebar-ring: 232 160 180;
+    /* Sidebar tokens mapped to petal palette (HSL format) */
+    --sidebar-background: 350 67% 99%;   /* #fefaf8 warm white */
+    --sidebar-foreground: 0 17% 20%;     /* #3d2b2b ink-dark */
+    --sidebar-primary: 341 35% 64%;      /* #c77d94 petal-deep */
+    --sidebar-primary-foreground: 350 67% 99%;
+    --sidebar-accent: 342 100% 96%;      /* #fdf0f4 petal-pale */
+    --sidebar-accent-foreground: 341 35% 64%;
+    --sidebar-border: 342 65% 90%;       /* #f5d5de petal-light */
+    --sidebar-ring: 341 60% 75%;         /* #e8a0b4 petal */
   }
 
   .dark {
