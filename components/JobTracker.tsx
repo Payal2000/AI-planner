@@ -6,7 +6,7 @@ import SectionHeader from './ui/SectionHeader'
 import FadeInView from './ui/FadeInView'
 import { createClient } from '@/lib/supabase/client'
 
-type Status = 'Applied' | 'Interviewing' | 'Offer' | 'Rejected' | 'Withdrawn' | ''
+type Status = 'Applying' | 'Applied' | 'Interviewing' | 'Offer' | 'Rejected' | 'Withdrawn' | ''
 type NextAction = 'Prepare Interview' | 'Follow up' | 'Send email' | 'Waiting' | 'Decide'
 
 interface Application {
@@ -54,6 +54,7 @@ function rowToApp(row: DbRow): Application {
 }
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  Applying:     { bg: '#e0f2fe', text: '#0369a1' },
   Applied:      { bg: '#dbeafe', text: '#3b6fa0' },
   Interviewing: { bg: '#fef3c7', text: '#92670a' },
   Offer:        { bg: '#ede9fe', text: '#7c3aed' },
@@ -62,6 +63,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 }
 
 const STATUS_BAR: Record<string, string> = {
+  Applying:     '#38bdf8',
   Applied:      '#3b82f6',
   Interviewing: '#f59e0b',
   Offer:        '#8b5cf6',
@@ -78,7 +80,7 @@ const ACTION_COLORS: Record<string, { bg: string; text: string }> = {
 }
 
 const today = () => new Date().toISOString().split('T')[0]
-const STATUS_ORDER: Status[] = ['Applied', 'Interviewing', 'Offer', 'Rejected', 'Withdrawn']
+const STATUS_ORDER: Status[] = ['Applying', 'Applied', 'Interviewing', 'Offer', 'Rejected', 'Withdrawn']
 
 export default function JobTracker() {
   const supabase = createClient()
