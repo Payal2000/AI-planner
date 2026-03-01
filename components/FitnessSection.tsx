@@ -43,7 +43,7 @@ const defaultFitness = (): FitnessData => ({
 })
 
 const inputClass = 'flex-1 min-w-0 bg-transparent outline-none text-[13px] placeholder:text-ink-faint border-b border-petal-light focus:border-petal transition-colors text-ink-mid'
-const taClass = 'w-full border border-dashed border-petal-light rounded-lg p-3 font-dm text-[13px] text-ink-mid bg-warm-white resize-y outline-none focus:border-petal transition-colors placeholder:text-ink-faint'
+const taClass = 'w-full border border-dashed border-petal-light rounded-lg p-3 font-dm text-[13px] text-ink-mid bg-transparent resize-y outline-none focus:border-petal transition-colors placeholder:text-ink-faint'
 
 export default function FitnessSection() {
   const { data, update, saved } = useDailySection<FitnessData>('fitness', defaultFitness)
@@ -54,11 +54,11 @@ export default function FitnessSection() {
       {saved && <p className="text-[11px] text-petal-deep font-semibold mb-4 text-right">✓ Saved</p>}
       <FadeInView delay={0.1}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <PlannerCard color="sage" title="🏋️ Workout Planner" desc="Split across morning & evening for max results.">
+          <PlannerCard color="rose" title="🏋️ Workout Planner" desc="Split across morning & evening for max results." style={{ background: '#ffffff' }}>
             <CardList items={workoutPlan} />
           </PlannerCard>
 
-          <PlannerCard color="sky" title="📊 Body Progress Tracker" desc="Track changes weekly — be patient with yourself.">
+          <PlannerCard color="latte" title="📊 Body Progress Tracker" desc="Track changes weekly — be patient with yourself." style={{ background: '#ffffff' }}>
             <ul className="list-none">
               {bodyTrackerLabels.map((label) => (
                 <li key={label} className="flex items-center gap-2 py-2 border-b border-[rgba(200,160,170,0.1)] last:border-0">
@@ -74,7 +74,7 @@ export default function FitnessSection() {
             </ul>
           </PlannerCard>
 
-          <PlannerCard color="gold" title="🎯 Fitness Goals" desc="What are you working toward?">
+          <PlannerCard color="lavender" title="🎯 Fitness Goals" desc="What are you working toward?" style={{ background: '#ffffff' }}>
             <div className="mb-3">
               <input
                 value={data.goalTitle}

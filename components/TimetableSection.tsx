@@ -113,6 +113,8 @@ function CalendarWidget({ isAuthed }: { isAuthed: boolean }) {
   const [editNote, setEditNote] = useState('')
   const [saving, setSaving] = useState(false)
   const [savedKey, setSavedKey] = useState<string | null>(null)
+  const noteDebounce = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isFirstNoteLoad = useRef(true)
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
@@ -142,8 +144,18 @@ function CalendarWidget({ isAuthed }: { isAuthed: boolean }) {
   const justSaved = useRef(false)
   useEffect(() => {
     if (justSaved.current) { justSaved.current = false; return }
+    isFirstNoteLoad.current = true
     setEditNote(notesByDate[selected] ?? '')
+    setTimeout(() => { isFirstNoteLoad.current = false }, 0)
   }, [selected, notesByDate])
+
+  // Auto-save note (debounced 1s)
+  useEffect(() => {
+    if (isFirstNoteLoad.current || !isAuthed) return
+    if (noteDebounce.current) clearTimeout(noteDebounce.current)
+    noteDebounce.current = setTimeout(() => { saveNote() }, 1000)
+    return () => { if (noteDebounce.current) clearTimeout(noteDebounce.current) }
+  }, [editNote]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const prevMonth = () => setViewDate(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))
   const nextMonth = () => setViewDate(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))
@@ -298,15 +310,10 @@ function CalendarWidget({ isAuthed }: { isAuthed: boolean }) {
               />
 
               <div className="mt-3 flex items-center gap-3">
-                <motion.button
-                  onClick={saveNote}
-                  disabled={!isAuthed || saving}
-                  className="text-[12px] font-semibold tracking-wide uppercase px-5 py-2 rounded-full bg-[#f5b8c8] text-white hover:bg-[#d4849a] disabled:opacity-50 transition"
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {saving ? 'Saving…' : 'Save Note'}
-                </motion.button>
-                {savedKey === selected && (
+                {saving && (
+                  <span className="text-[11px] text-ink-faint">Saving…</span>
+                )}
+                {savedKey === selected && !saving && (
                   <motion.span
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -342,6 +349,7 @@ export default function TimetableSection() {
   const [expanded, setExpanded] = useState(false)
   const [isAuthed, setIsAuthed] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Load per-date timetable from daily_plans
   useEffect(() => {
@@ -377,6 +385,14 @@ export default function TimetableSection() {
     load()
     return () => { cancelled = true }
   }, [dateKey]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Auto-save: debounce 1.5s after any change ──────────────────────────────
+  useEffect(() => {
+    if (!dirty || loading) return
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
+    autoSaveTimer.current = setTimeout(() => { saveBlocks() }, 1500)
+    return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current) }
+  }, [blocks, dirty]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const markDirty = () => {
     setDirty(true)
@@ -452,29 +468,11 @@ export default function TimetableSection() {
             className="px-4 sm:px-9 py-5 sm:py-[30px] border-b"
             style={{ background: 'linear-gradient(135deg, #fdf0f4 0%, #f9e4eb 100%)', borderColor: 'rgba(232,160,180,0.15)' }}
           >
-            <div className="flex items-center justify-between gap-3 mb-1">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <h3 className="font-playfair text-[18px] sm:text-[22px] text-ink-dark">
-                Daily Schedule — The Glow-Up Routine
+                Daily Schedule
               </h3>
-              <motion.button
-                onClick={clearBlockContent}
-                title="Clear all content"
-                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-petal-light text-ink-faint hover:text-red-400 hover:border-red-200 bg-[#fffcf8] transition-colors"
-                whileTap={{ scale: 0.9 }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                </svg>
-              </motion.button>
-            </div>
-            <p className="text-[12px] sm:text-[13px] text-ink-soft">
-              Designed around peak cognitive hours, fat-burning windows & recruiter activity
-            </p>
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <p className="text-[12px] text-ink-mid">
-                Customize every slot, then save it as your personal rhythm.
-              </p>
-              <div className="flex gap-2 flex-wrap sm:justify-end">
+              <div className="flex items-center gap-2 flex-wrap">
                 <motion.button
                   onClick={() => setExpanded(e => !e)}
                   className="text-[12px] font-semibold tracking-wide uppercase px-4 py-2 rounded-full border border-petal-light text-petal-deep hover:border-petal"
@@ -489,23 +487,21 @@ export default function TimetableSection() {
                 >
                   + Add Block
                 </motion.button>
+                <span className={`text-[12px] font-semibold tracking-wide uppercase px-5 py-2 rounded-full text-white ${saving ? 'bg-petal-deep opacity-70' : status === 'saved' ? 'bg-petal-deep' : 'bg-ink-soft opacity-50'}`}>
+                  {saving ? 'Saving…' : status === 'saved' ? 'Saved ✓' : 'Auto-save'}
+                </span>
                 <motion.button
-                  onClick={saveBlocks}
-                  disabled={!dirty || saving}
-                  className={`text-[12px] font-semibold tracking-wide uppercase px-5 py-2 rounded-full text-white transition disabled:opacity-50 ${dirty ? 'bg-petal-deep hover:bg-petal' : 'bg-ink-soft'}`}
-                  whileTap={{ scale: dirty && !saving ? 0.95 : 1 }}
+                  onClick={clearBlockContent}
+                  title="Clear all content"
+                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border border-petal-light text-ink-faint hover:text-red-400 hover:border-red-200 bg-[#fffcf8] transition-colors"
+                  whileTap={{ scale: 0.9 }}
                 >
-                  {saving ? 'Saving…' : dirty ? 'Save Timetable' : 'Saved'}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
                 </motion.button>
-                {status === 'saved' && (
-                  <span className="text-[11px] font-semibold text-petal-deep">
-                    ✓ Saved
-                  </span>
-                )}
                 {status === 'error' && (
-                  <span className="text-[11px] font-semibold text-red-500">
-                    Couldn&apos;t save. Try again.
-                  </span>
+                  <span className="text-[11px] font-semibold text-red-500">Couldn&apos;t save. Try again.</span>
                 )}
               </div>
             </div>
