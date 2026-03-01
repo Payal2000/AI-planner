@@ -190,6 +190,8 @@ export default function DailyPlanner() {
   const [data,     setData]     = useState<DayData>(defaultData())
   const [loading,  setLoading]  = useState(true)
   const [savedMsg, setSavedMsg] = useState(false)
+  const [showAllOutreach,     setShowAllOutreach]     = useState(false)
+  const [showAllApplications, setShowAllApplications] = useState(false)
   const saveTimer  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isFirstLoad = useRef(true)
   // Preserve non-planner fields (e.g. calendar notes) so saves don't wipe them
@@ -637,7 +639,7 @@ export default function DailyPlanner() {
                 <SectionLabel>💌 Outreach Tracker</SectionLabel>
                 <AnimatePresence>
                   <ul className="list-none space-y-1">
-                    {data.outreach.map((item, i) => (
+                    {(showAllOutreach ? data.outreach : data.outreach.slice(0, 1)).map((item, i) => (
                       <motion.li
                         key={i}
                         layout
@@ -665,12 +667,20 @@ export default function DailyPlanner() {
                     ))}
                   </ul>
                 </AnimatePresence>
+                {data.outreach.length > 1 && (
+                  <button
+                    onClick={() => setShowAllOutreach(v => !v)}
+                    className="text-[11px] text-petal-deep hover:text-petal-mid transition-colors mt-0.5 mb-1"
+                  >
+                    {showAllOutreach ? 'Show less' : `Show all (${data.outreach.length})`}
+                  </button>
+                )}
                 <AddRowButton onClick={() => addCheckItem('outreach')} label="Add contact" />
 
                 <SectionLabel>📋 Applications Sent</SectionLabel>
                 <AnimatePresence>
                   <ul className="list-none space-y-1">
-                    {data.applications.map((item, i) => (
+                    {(showAllApplications ? data.applications : data.applications.slice(0, 1)).map((item, i) => (
                       <motion.li
                         key={i}
                         layout
@@ -707,6 +717,14 @@ export default function DailyPlanner() {
                     ))}
                   </ul>
                 </AnimatePresence>
+                {data.applications.length > 1 && (
+                  <button
+                    onClick={() => setShowAllApplications(v => !v)}
+                    className="text-[11px] text-petal-deep hover:text-petal-mid transition-colors mt-0.5 mb-1"
+                  >
+                    {showAllApplications ? 'Show less' : `Show all (${data.applications.length})`}
+                  </button>
+                )}
                 <AddRowButton onClick={addApp} label="Add application" />
 
                 <SectionLabel>🌙 Evening Reflection</SectionLabel>
