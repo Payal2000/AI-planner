@@ -345,9 +345,9 @@ export default function MealsSection() {
             style={{ borderColor: 'rgba(200,160,170,0.12)', background: 'linear-gradient(135deg, #fdf5f7 0%, #fffcf8 100%)' }}
           >
             <h2 className="font-playfair text-2xl font-bold text-petal-deep">Food Diary</h2>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center flex-wrap gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-[13px] font-semibold text-ink-mid">Daily Calorie Goal</span>
+                <span className="text-[13px] font-semibold text-ink-mid whitespace-nowrap">Daily Calorie Goal</span>
                 <input
                   value={calorieGoal}
                   onChange={e => updateGoal(e.target.value)}
@@ -459,8 +459,8 @@ export default function MealsSection() {
           </div>
 
           {/* ── Footer ── */}
-          <div className="px-6 py-3 flex items-center justify-between border-t" style={{ borderColor: 'rgba(200,160,170,0.1)' }}>
-            <div className="flex items-center gap-3">
+          <div className="px-6 py-3 flex flex-wrap items-center justify-between gap-3 border-t" style={{ borderColor: 'rgba(200,160,170,0.1)' }}>
+            <div className="flex flex-wrap items-center gap-3">
               <span className="text-[11px] text-ink-faint">B = Breakfast · L = Lunch · D = Dinner · S = Snack</span>
               <motion.button
                 onClick={() => {
@@ -500,7 +500,7 @@ export default function MealsSection() {
                 <div className="border-t px-6 py-5 space-y-4" style={{ borderColor: 'rgba(200,160,170,0.1)', background: 'linear-gradient(135deg, #fdf5f7 0%, #fffcf8 100%)' }}>
 
                   {/* Tab bar */}
-                  <div className="flex items-center bg-[#fffcf8] rounded-full p-0.5 gap-0.5 w-fit shadow-sm border border-petal-light">
+                  <div className="flex items-center bg-[#fffcf8] rounded-full p-0.5 gap-0.5 w-fit max-w-full overflow-x-auto shadow-sm border border-petal-light">
                     {([
                       { key: 'daily',    label: '📊 Daily' },
                       { key: 'weekly',   label: '📅 Weekly' },
