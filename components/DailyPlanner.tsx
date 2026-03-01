@@ -45,7 +45,7 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'long', mo
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold tracking-[3px] uppercase text-petal mb-3 mt-6 first:mt-0">
+    <p className="text-[11px] font-semibold tracking-[3px] uppercase text-petal mb-2 mt-4 first:mt-0">
       {children}
     </p>
   )
@@ -99,7 +99,7 @@ function TextInput({
 }
 
 function Textarea({
-  value, onChange, placeholder, minHeight = 60,
+  value, onChange, placeholder, minHeight = 38,
 }: {
   value: string; onChange: (v: string) => void; placeholder: string; minHeight?: number;
 }) {
@@ -109,7 +109,7 @@ function Textarea({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       style={{ minHeight }}
-      className="w-full border border-dashed border-petal-light rounded-lg p-3 font-dm text-[13px] text-ink-mid bg-warm-white resize-y outline-none focus:border-petal transition-colors placeholder:text-ink-faint"
+      className="w-full border border-dashed border-petal-light rounded-lg p-2.5 font-dm text-[13px] text-ink-mid bg-warm-white resize-y outline-none focus:border-petal transition-colors placeholder:text-ink-faint"
     />
   )
 }
@@ -541,7 +541,7 @@ export default function DailyPlanner() {
               className="grid grid-cols-1 md:grid-cols-2"
             >
               {/* ── Left column ── */}
-              <div className="p-4 sm:p-6 md:p-9 border-b md:border-b-0 md:border-r" style={{ borderColor: 'rgba(200,160,170,0.1)' }}>
+              <div className="p-4 sm:p-5 border-b md:border-b-0 md:border-r" style={{ borderColor: 'rgba(200,160,170,0.1)' }}>
 
                 <SectionLabel>🌸 Morning Intention</SectionLabel>
                 <Textarea
@@ -561,7 +561,7 @@ export default function DailyPlanner() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center gap-3 py-1.5 group"
+                        className="flex items-center gap-3 py-1 group"
                       >
                         <Checkbox
                           checked={item.done}
@@ -594,7 +594,7 @@ export default function DailyPlanner() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center gap-3 py-1.5 group"
+                        className="flex items-center gap-3 py-1 group"
                       >
                         <Checkbox
                           checked={item.done}
@@ -621,12 +621,11 @@ export default function DailyPlanner() {
                   value={data.studyNotes}
                   onChange={(v) => update('studyNotes', v)}
                   placeholder="Topic studied, key takeaways..."
-                  minHeight={80}
                 />
               </div>
 
               {/* ── Right column ── */}
-              <div className="p-4 sm:p-6 md:p-9">
+              <div className="p-4 sm:p-5">
 
                 <SectionLabel>🔨 Build Log</SectionLabel>
                 <Textarea
@@ -646,7 +645,7 @@ export default function DailyPlanner() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center gap-3 py-1.5 group"
+                        className="flex items-center gap-3 py-1 group"
                       >
                         <Checkbox
                           checked={item.done}
@@ -679,7 +678,7 @@ export default function DailyPlanner() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10, height: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex items-center gap-2 py-1.5 group"
+                        className="flex items-center gap-2 py-1 group"
                       >
                         <Checkbox
                           checked={item.done}
