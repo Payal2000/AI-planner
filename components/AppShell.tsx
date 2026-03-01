@@ -9,8 +9,6 @@ import JobTracker from './JobTracker'
 import HabitTracker from './HabitTracker'
 import FitnessSection from './FitnessSection'
 import MealsSection from './MealsSection'
-import Footer from './Footer'
-
 const sections = {
   timetable: TimetableSection,
   daily:     DailyPlanner,
@@ -47,7 +45,6 @@ export default function AppShell() {
             <ActiveComponent />
           </motion.div>
         </AnimatePresence>
-        <Footer />
       </div>
     </DateProvider>
   )
