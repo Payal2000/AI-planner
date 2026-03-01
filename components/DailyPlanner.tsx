@@ -395,7 +395,7 @@ export default function DailyPlanner() {
               <p className="font-cormorant text-[15px] text-ink-soft" suppressHydrationWarning>{fmtDate(date)}</p>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto justify-start lg:justify-end">
+            <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto justify-start lg:justify-end min-w-0">
               {/* Date nav */}
               <motion.button
                 onClick={() => setDate(addDays(date, -1))}
