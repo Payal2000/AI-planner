@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import AuthButton from './AuthButton'
 import { useSection } from '@/context/SectionContext'
 
-const links = [
+const links: { id: string; label: string; iconSrc: string; iconClass?: string }[] = [
   { id: 'timetable', label: 'Timetable',    iconSrc: '/icons/clock.png' },
   { id: 'daily',     label: 'Daily Planner', iconSrc: '/icons/coffee.png' },
   { id: 'weekly',    label: 'Job Tracker',   iconSrc: '/icons/books.png' },
   { id: 'habits',    label: 'Habits',        iconSrc: '/icons/ribbon.png' },
   { id: 'meals',     label: 'Meals',         iconSrc: '/icons/diet.png' },
   { id: 'fitness',   label: 'Fitness',       iconSrc: '/icons/headphones.png', iconClass: 'w-full h-full scale-[1.7]' },
-] as const
+]
 
 interface NavProps {
   collapsed: boolean
