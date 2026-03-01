@@ -470,11 +470,11 @@ export default function TimetableSection() {
             <p className="text-[12px] sm:text-[13px] text-ink-soft">
               Designed around peak cognitive hours, fat-burning windows & recruiter activity
             </p>
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <p className="text-[12px] text-ink-mid">
                 Customize every slot, then save it as your personal rhythm.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap sm:justify-end">
                 <motion.button
                   onClick={() => setExpanded(e => !e)}
                   className="text-[12px] font-semibold tracking-wide uppercase px-4 py-2 rounded-full border border-petal-light text-petal-deep hover:border-petal"
