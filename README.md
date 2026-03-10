@@ -1,6 +1,7 @@
 # Glow Up Planner
 
-A personal productivity and wellness planner built for women doing a serious glow-up — tracking career goals, daily habits, job applications, fitness, meals, and more. Powered by Next.js, Supabase, and OpenAI.
+A personal productivity and wellness planner built for women doing a serious glow-up: tracking career goals, daily habits, job applications, fitness, meals, and more. Powered by Next.js, Supabase, and OpenAI.
+<img width="1657" height="932" alt="Screenshot 2026-03-09 at 8 04 05 PM" src="https://github.com/user-attachments/assets/a8c44b56-ba35-44d9-9ad6-35c7c6039a60" />
 
 ## Features
 
@@ -22,6 +23,9 @@ A personal productivity and wellness planner built for women doing a serious glo
 - AI **Cold Outreach Drafter** — 3-sentence LinkedIn DM per row, one click
 - **Analytics tab** — stat cards, status breakdown bars, applications by month chart, conversion pipeline
 
+<img width="1680" height="776" alt="Screenshot 2026-03-09 at 8 04 30 PM" src="https://github.com/user-attachments/assets/451a0714-6cb4-4e49-bc60-eecf51066da0" />
+
+
 ### Habit Tracker
 - Fully customisable habit list — add, remove, and rename habits inline
 - 7-day week grid (desktop table + mobile cards)
@@ -40,6 +44,9 @@ A personal productivity and wellness planner built for women doing a serious glo
   - **Food Research** — look up any food's macros and autofill the diary
   - **Ask Anything** — nutrition Q&A with context from today's log
 - All coach results saved to `meal_coach_logs` and loaded on panel open
+
+<img width="1580" height="882" alt="Screenshot 2026-03-09 at 8 04 51 PM" src="https://github.com/user-attachments/assets/790a9229-7810-473e-a4b7-7417d883d83f" />
+
 
 ### Goals
 - Goal cards with progress tracking
